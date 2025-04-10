@@ -1,0 +1,60 @@
+name: Flutter APK & AAB Builder
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_apk:
+        description: "Build APK?"
+        required: false
+        default: "true"
+      build_aab:
+        description: "Build AAB?"
+        required: false
+        default: "false"
+
+    push:
+      branches: []   # No auto-runs on push
+    
+    pull_request:
+      branches: []   # No auto-runs on PRs
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.10.5'
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Build APK
+      if: ${{ github.event.inputs.build_apk == 'true' }}
+      run: flutter build apk --release
+
+    - name: Build AAB
+      if: ${{ github.event.inputs.build_aab == 'true' }}
+      run: flutter build appbundle --release
+
+    - name: Upload APK
+      if: ${{ github.event.inputs.build_apk == 'true' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-release.apk
+        path: build/app/outputs/flutter-apk/app-release.apk
+
+    - name: Upload AAB
+      if: ${{ github.event.inputs.build_aab == 'true' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-release.aab
+        path: build/app/outputs/bundle/release/app-release.aab
+        
+        
+        
