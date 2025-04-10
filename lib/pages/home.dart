@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'widgets/input.dart'; // import your custom Input widget
+import '../widgets/input.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
