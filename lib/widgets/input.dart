@@ -3,19 +3,19 @@ import 'package:flutter/material.dart';
 class Input extends StatefulWidget {
   final String title;
   final String hintText;
-  final String leftImage;
-  final String rightImage;
-  final String errorText;
-  final String forgotText;
+  final String? leftImage;
+  final String? rightImage;
+  final String? errorText;
+  final String? forgotText;
 
   const Input({
     super.key,
     required this.title,
     required this.hintText,
-    required this.leftImage,
-    required this.rightImage,
-    required this.errorText,
-    required this.forgotText,
+    this.leftImage,
+    this.rightImage,
+    this.errorText,
+    this.forgotText,
   });
 
   @override
@@ -41,44 +41,46 @@ class _InputState extends State<Input> {
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            children: [
-              Image.asset(widget.leftImage, width: 24, height: 24),
-              const SizedBox(width: 8),
-              Expanded(
-                child: TextFormField(
-                  controller: _controller,
-                  decoration: InputDecoration(
-                    labelText: widget.hintText, // This makes the hint float up!
-                    border: InputBorder.none,
-                    floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  ),
-                ),
-              ),
-              Image.asset(widget.rightImage, width: 24, height: 24),
-            ],
+        TextFormField(
+          controller: _controller,
+          decoration: InputDecoration(
+            labelText: widget.hintText,
+            border: const OutlineInputBorder(),
+            prefixIcon: widget.leftImage != null
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset(widget.leftImage!),
+                  )
+                : null,
+            suffixIcon: widget.rightImage != null
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset(widget.rightImage!),
+                  )
+                : null,
           ),
         ),
         const SizedBox(height: 6),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              widget.errorText,
-              style: const TextStyle(color: Color(0xFFB71C1C), fontSize: 12),
-            ),
-            Text(
-              widget.forgotText,
-              style: const TextStyle(color: Colors.blue, fontSize: 12),
-            ),
-          ],
-        ),
+        if (widget.errorText != null || widget.forgotText != null)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                widget.errorText ?? '',
+                style: const TextStyle(
+                  color: Color(0xFFB71C1C),
+                  fontSize: 12,
+                ),
+              ),
+              Text(
+                widget.forgotText ?? '',
+                style: const TextStyle(
+                  color: Colors.blue,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
       ],
     );
   }
