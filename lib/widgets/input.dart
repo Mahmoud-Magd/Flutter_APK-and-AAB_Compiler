@@ -52,11 +52,12 @@ class _InputState extends State<Input> {
               Image.asset(widget.leftImage, width: 24, height: 24),
               const SizedBox(width: 8),
               Expanded(
-                child: TextField(
+                child: TextFormField(
                   controller: _controller,
                   decoration: InputDecoration(
+                    labelText: widget.hintText, // This makes the hint float up!
                     border: InputBorder.none,
-                    hintText: widget.hintText,
+                    floatingLabelBehavior: FloatingLabelBehavior.auto,
                   ),
                 ),
               ),
