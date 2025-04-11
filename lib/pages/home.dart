@@ -16,8 +16,8 @@ class HomePage extends StatelessWidget {
         child: Input(
           title: "Password",
           hintText: "Enter password",
-          leftImage: "assets/icons/i_lock.png",
-          rightImage: "assets/icons/i_eye.png",
+          leftImage: null,
+          rightImage: null,
           errorText: "Password is required",
           forgotText: "Forgot password?",
         ),
