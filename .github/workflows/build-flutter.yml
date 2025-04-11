@@ -49,9 +49,17 @@ jobs:
         if: ${{ github.event.inputs.build_type == 'aab' || github.event.inputs.build_type == 'both' }}
         run: flutter build appbundle --release
 
-      # Step 6: Upload APK and/or AAB as artifacts
+      # Step 6: Debug Artifact Paths (Optional)
+      - name: Debug Artifact Paths
+        run: |
+          echo "Checking APK path:"
+          ls build/app/outputs/flutter-apk/
+          echo "Checking AAB path:"
+          ls build/app/outputs/bundle/release/
+
+      # Step 7: Upload APK and/or AAB as artifacts
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Flutter-Builds
           path: |
