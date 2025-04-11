@@ -25,11 +25,22 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
 
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.13.0'  # Updated to ensure Dart SDK >=3.1.0 is included
+        flutter-version: '3.29.2'
+
+    - name: Install Android SDK components
+      run: |
+        sdkmanager "platforms;android-35" "build-tools;34.0.0" "ndk;26.3.11579264"
+        yes | sdkmanager --licenses
+        flutter doctor --android-licenses
+
+    - name: Debug file structure
+      run: ls -R android
 
     - name: Check Dart and Flutter versions
       run: |
@@ -41,7 +52,7 @@ jobs:
 
     - name: Build APK
       if: ${{ github.event.inputs.build_apk == 'true' }}
-      run: flutter build apk --release
+      run: flutter build apk --release --no-tree-shake-icons
 
     - name: Build AAB
       if: ${{ github.event.inputs.build_aab == 'true' }}
@@ -60,6 +71,3 @@ jobs:
       with:
         name: app-release.aab
         path: build/app/outputs/bundle/release/app-release.aab
-
-
-        
