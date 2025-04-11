@@ -1,0 +1,60 @@
+name: Build Flutter APK and AAB
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to build from'
+        required: true
+        default: 'main'
+      build_type:
+        description: 'Choose build type: apk, aab, both'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - apk
+          - aab
+          - both
+
+jobs:
+  build:
+    name: Build APK and/or AAB
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      # Step 2: Set up Flutter
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+
+      # Step 3: Install dependencies
+      - name: Install Dependencies
+        run: flutter pub get
+
+      # Step 4: Conditionally Build APK
+      - name: Build APK
+        if: ${{ github.event.inputs.build_type == 'apk' || github.event.inputs.build_type == 'both' }}
+        run: flutter build apk --release
+
+      # Step 5: Conditionally Build AAB
+      - name: Build App Bundle (AAB)
+        if: ${{ github.event.inputs.build_type == 'aab' || github.event.inputs.build_type == 'both' }}
+        run: flutter build appbundle --release
+
+      # Step 6: Upload APK and/or AAB as artifacts
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Flutter-Builds
+          path: |
+            ${{ github.event.inputs.build_type == 'apk' && 'build/app/outputs/flutter-apk/app-release.apk' }}
+            ${{ github.event.inputs.build_type == 'aab' && 'build/app/outputs/bundle/release/app-release.aab' }}
+            ${{ github.event.inputs.build_type == 'both' && 'build/app/outputs/flutter-apk/app-release.apk\nbuild/app/outputs/bundle/release/app-release.aab' }}
